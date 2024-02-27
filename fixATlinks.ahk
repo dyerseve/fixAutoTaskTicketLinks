@@ -1,6 +1,7 @@
+; v0.3 Added Ticket Number search
 ; v0.2 Added start and stop string as copying the sections below to make copies was causing it to find the substring and replace my clipboard, doh!
 ; ExecuteCommand only opens a popup, so can't use that, some tasks are tickets, some are tasks in Projects. A task in Project is less used and tasks in general are less used so I gave up trying to find any way to discern from the ExecuteCommand which type of task it is.
- 
+
 ; Example ticket before url: https://ww14.autotask.net/Autotask/AutotaskExtend/ExecuteCommand.aspx?Code=OpenTicketDetail&TicketID=53203
 ; Example ticket after url: https://ww14.autotask.net/Mvc/ServiceDesk/TicketDetail.mvc?workspace=False&ids%5B0%5D=53203&ticketId=53203
 
@@ -12,6 +13,13 @@
 
 ;Project: https://ww14.autotask.net/Autotask/AutotaskExtend/ExecuteCommand.aspx?Code=OpenTaskDetail&taskid=48934
 ;Project: https://ww14.autotask.net/Mvc/ServiceDesk/TicketDetail.mvc?ticketId=48934
+
+; Ticket Pattern search feature:
+
+; copy this: T20240223.0015
+; then search for the ticket: https://ww14.autotask.net/Mvc/ServiceDesk/TicketGridSearch.mvc/SearchByTicketNumber?TicketNumber=T20240223.0015
+
+https://ww14.autotask.net/Mvc/ServiceDesk/TicketGridSearch.mvc/SearchByTicketNumber?TicketNumber=T20240223.0015
 
 #Requires AutoHotkey v2.0
 #SingleInstance Force
@@ -26,6 +34,14 @@ CheckClipboard(DataType) {
     If (RegExMatch(clipboardContent, "^https://ww\d+\.autotask\.net/Autotask/AutotaskExtend/ExecuteCommand\.aspx\?Code=OpenTicketDetail&TicketID=(\d+)$", &match)) {
         ticketID := match[1]
         newURL := "https://ww14.autotask.net/Mvc/ServiceDesk/TicketDetail.mvc?workspace=False&ids%5B0%5D=" ticketID "&ticketId=" ticketID
+        ;ToolTip newURL
+        A_Clipboard := newURL
+    } else {
+        ; If no match found, do nothing or handle it as needed
+    }
+    If (RegExMatch(clipboardContent, "^(T20\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\.\d{4})$", &match)) {
+        ticketID := match[1]
+        newURL := "https://ww14.autotask.net/Mvc/ServiceDesk/TicketGridSearch.mvc/SearchByTicketNumber?TicketNumber=" ticketID
         ;ToolTip newURL
         A_Clipboard := newURL
     } else {
