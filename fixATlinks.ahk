@@ -1,3 +1,4 @@
+; v0.4 Decode double "protected" links from barracuda and microsoft.
 ; v0.3 Added Ticket Number search
 ; v0.2 Added start and stop string as copying the sections below to make copies was causing it to find the substring and replace my clipboard, doh!
 ; ExecuteCommand only opens a popup, so can't use that, some tasks are tickets, some are tasks in Projects. A task in Project is less used and tasks in general are less used so I gave up trying to find any way to discern from the ExecuteCommand which type of task it is.
@@ -19,6 +20,14 @@
 ; copy this: T20240223.0015
 ; then search for the ticket: https://ww14.autotask.net/Mvc/ServiceDesk/TicketGridSearch.mvc/SearchByTicketNumber?TicketNumber=T20240223.0015
 
+
+; New feature to decode these types of links:
+; https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Flinkprotect.cudasvc.com%2Furl%3Fa%3Dhttps%253a%252f%252fsmotwildcats.org%26c%3DE%2C1%2COeb6MxVttUeyj2Str2IvhoQRRnnfPxWWkZ0GkZD8vdXZ91gRceQRQjTYH5OSZvXrsHloTISrHzYsWtm351zg4xgB2ax8NFaz5-y7aic_tevKwQ4fngrlB1JX2JCg%26typo%3D1&data=05%7C02%7Cpellis%40cmitsolutions.com%7C9f8f0066490c41fc7b2608dc3c5a566e%7C7bf5c1815bc4497e9db53845ce848a0d%7C0%7C0%7C638451605914421018%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=hiH3Queo0Rx8r%2BT7UQltM5CtB%2BXTQvs%2B0ytpK%2BdLQxM%3D&reserved=0
+; https://smotwildcats.org/
+; Sometimes our ticketing system will double wrap the weblinks a customer sends up. Often, I just need to know what it is, so decoding it in clipboard seems ideal.
+
+
+; 
 
 #Requires AutoHotkey v2.0
 #SingleInstance Force
@@ -46,4 +55,25 @@ CheckClipboard(DataType) {
     } else {
         ; If no match found, do nothing or handle it as needed
     }
+        If (RegExMatch(clipboardContent, "^https:\/\/nam04\.safelinks\.protection\.outlook\.com\/\?url=https%3A%2F%2Flinkprotect.cudasvc.com%2Furl%3Fa%3D(http.*?)%26c%3DE%2C1%2C", &match)) {
+        encurl := match[1]
+        encurl := UrlUnescape(encurl)
+        encurl := UrlUnescape(encurl)
+        newURL := encurl
+        ;ToolTip newURL
+        A_Clipboard := newURL
+    } else {
+        ; If no match found, do nothing or handle it as needed
+    }
+}
+
+
+UrlEscape(Url, Flags := 0x000C1000) {
+   Static CC := 4096
+   VarSetStrCapacity(&Esc, CC)
+   Return !DllCall("Shlwapi.dll\UrlEscape", "Str", Url, "Str", Esc, "UIntP", &CC, "UInt", Flags, "UInt") ? Esc : ""
+}
+
+UrlUnescape(Url, Flags := 0x00140000) {
+   Return !DllCall("Shlwapi.dll\UrlUnescape", "Ptr", StrPtr(Url), "Ptr", 0, "UInt", 0, "UInt", Flags, "UInt") ? Url : ""
 }
