@@ -19,7 +19,6 @@
 ; copy this: T20240223.0015
 ; then search for the ticket: https://ww14.autotask.net/Mvc/ServiceDesk/TicketGridSearch.mvc/SearchByTicketNumber?TicketNumber=T20240223.0015
 
-https://ww14.autotask.net/Mvc/ServiceDesk/TicketGridSearch.mvc/SearchByTicketNumber?TicketNumber=T20240223.0015
 
 #Requires AutoHotkey v2.0
 #SingleInstance Force
