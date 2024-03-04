@@ -1,3 +1,4 @@
+; v0.5 Added single encode for barracuda as seen in service tickets
 ; v0.4 Decode double "protected" links from barracuda and microsoft.
 ; v0.3 Added Ticket Number search
 ; v0.2 Added start and stop string as copying the sections below to make copies was causing it to find the substring and replace my clipboard, doh!
@@ -27,6 +28,9 @@
 ; Sometimes our ticketing system will double wrap the weblinks a customer sends up. Often, I just need to know what it is, so decoding it in clipboard seems ideal.
 
 
+; cudaprotect only
+; https://linkprotect.cudasvc.com/url?a=https%3a%2f%2fsecure.cpacharge.com%2fpages%2friesenbeckfinancialgroupinc%2fpayments&c=E,1,80Yo5E_P0a-IBcQRbqnhA_bLuZ-5k6jRjR8Sj4yHRNHSkSb8UAQQBJD93BZAIa5B6ylopCxxbyquzKUFogjXDJOMjNIfvrIunA3W8ykAgWIxO3Y,&typo=1
+
 ; 
 
 #Requires AutoHotkey v2.0
@@ -55,9 +59,18 @@ CheckClipboard(DataType) {
     } else {
         ; If no match found, do nothing or handle it as needed
     }
-        If (RegExMatch(clipboardContent, "^https:\/\/nam04\.safelinks\.protection\.outlook\.com\/\?url=https%3A%2F%2Flinkprotect.cudasvc.com%2Furl%3Fa%3D(http.*?)%26c%3DE%2C1%2C", &match)) {
+    If (RegExMatch(clipboardContent, "^https:\/\/nam04\.safelinks\.protection\.outlook\.com\/\?url=https%3A%2F%2Flinkprotect.cudasvc.com%2Furl%3Fa%3D(http.*?)%26c%3DE%2C1%2C", &match)) {
         encurl := match[1]
         encurl := UrlUnescape(encurl)
+        encurl := UrlUnescape(encurl)
+        newURL := encurl
+        ;ToolTip newURL
+        A_Clipboard := newURL
+    } else {
+        ; If no match found, do nothing or handle it as needed
+    }
+    If (RegExMatch(clipboardContent, "^https:\/\/linkprotect\.cudasvc\.com\/url\?a=(http.*?)\&c=E,1,", &match)) {
+        encurl := match[1]
         encurl := UrlUnescape(encurl)
         newURL := encurl
         ;ToolTip newURL
@@ -77,3 +90,5 @@ UrlEscape(Url, Flags := 0x000C1000) {
 UrlUnescape(Url, Flags := 0x00140000) {
    Return !DllCall("Shlwapi.dll\UrlUnescape", "Ptr", StrPtr(Url), "Ptr", 0, "UInt", 0, "UInt", Flags, "UInt") ? Url : ""
 }
+
+
