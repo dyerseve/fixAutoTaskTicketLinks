@@ -1,3 +1,4 @@
+; v0.7 Added try catch to avoid occasional failures to read or write clipboard, usually when cpu was overtasked
 ; v0.6 Moved url decodes to behind a hotkey, to avoid accidental usage when not intended. URLDecode Clipboard Hotkey = CTRL+?
 ; v0.5 Added single encode for barracuda as seen in service tickets
 ; v0.4 Decode double "protected" links from barracuda and microsoft.
@@ -48,7 +49,10 @@ OnClipboardChange CheckClipboard
         encurl := UrlUnescape(encurl)
         newURL := encurl
         ;ToolTip newURL
-        A_Clipboard := newURL
+        try {
+            A_Clipboard := newURL
+        } catch {
+        }
     } else {
         ; If no match found, do nothing or handle it as needed
     }
@@ -59,7 +63,10 @@ OnClipboardChange CheckClipboard
         encurl := UrlUnescape(encurl)
         newURL := encurl
         ;ToolTip newURL
-        A_Clipboard := newURL
+        try {
+            A_Clipboard := newURL
+        } catch {
+        }
     } else {
         ; If no match found, do nothing or handle it as needed
     }
@@ -80,7 +87,10 @@ CheckClipboard(DataType) {
         ticketID := match[1]
         newURL := "https://ww14.autotask.net/Mvc/ServiceDesk/TicketDetail.mvc?workspace=False&ids%5B0%5D=" ticketID "&ticketId=" ticketID
         ;ToolTip newURL
-        A_Clipboard := newURL
+        try {
+            A_Clipboard := newURL
+        } catch {
+        }
     } else {
         ; If no match found, do nothing or handle it as needed
     }
@@ -90,7 +100,10 @@ CheckClipboard(DataType) {
         ticketID := match[1]
         newURL := "https://ww14.autotask.net/Mvc/ServiceDesk/TicketGridSearch.mvc/SearchByTicketNumber?TicketNumber=" ticketID
         ;ToolTip newURL
-        A_Clipboard := newURL
+        try {
+            A_Clipboard := newURL
+        } catch {
+        }
     } else {
         ; If no match found, do nothing or handle it as needed
     }
@@ -100,7 +113,10 @@ CheckClipboard(DataType) {
         taskID := match[1]
         newURL := "https://ww14.autotask.net/Mvc/Projects/TaskDetail.mvc?taskID=" taskID
         ;ToolTip newURL
-        A_Clipboard := newURL
+        try {
+            A_Clipboard := newURL
+        } catch {
+        }
     } else {
         ; If no match found, do nothing or handle it as needed
     }
